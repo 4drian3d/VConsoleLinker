@@ -32,7 +32,10 @@ public final class WebHookManager {
             while ((log = logQueue.poll()) != null) {
                 builder.append('\n').append(log);
             }
-            client.sendWebHook(WebHook.builder().content(builder.toString()).build());
+            String WebHookOutput = "```ansi\n" + builder.toString() + "\n```";
+            if (!WebHookOutput.equals("```ansi\n\n```")) {
+                client.sendWebHook(WebHook.builder().content(WebHookOutput).build());
+            }
         }, 0, 1, TimeUnit.SECONDS);
     }
 
