@@ -1,7 +1,7 @@
 package io.github._4drian3d.vconsolelinker.configuration;
 
-import ninja.leaping.configurate.commented.CommentedConfigurationNode;
-import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
+import org.spongepowered.configurate.CommentedConfigurationNode;
+import org.spongepowered.configurate.hocon.HoconConfigurationLoader;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -17,11 +17,11 @@ public interface Configuration {
     static Configuration load(final Path path) throws IOException {
         final Path configPath = loadFiles(path);
         final HoconConfigurationLoader loader = HoconConfigurationLoader.builder()
-                .setPath(configPath)
+                .path(configPath)
                 .build();
         final CommentedConfigurationNode loaded = loader.load();
-        final String channelId = loaded.getNode("channel-id").getString();
-        final String token =  loaded.getNode("token").getString();
+        final String channelId = loaded.node("channel-id").getString();
+        final String token =  loaded.node("token").getString();
         return new Configuration() {
             @Override
             public String getChannelId() {
