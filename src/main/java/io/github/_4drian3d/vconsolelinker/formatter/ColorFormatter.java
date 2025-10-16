@@ -1,5 +1,11 @@
 package io.github._4drian3d.vconsolelinker.formatter;
 
+import com.google.common.collect.ImmutableMap;
+import net.kyori.adventure.text.format.TextColor;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,14 +37,34 @@ public final class ColorFormatter implements Formatter {
   }
 
   private int approximateAnsiColor(final int red, final int green, final int blue) {
-    if (red > 200 && green < 80 && blue < 80) return 31;
-    if (red < 80 && green > 200 && blue < 80) return 32;
-    if (red > 200 && green > 200 && blue < 80) return 33;
-    if (red < 80 && green < 80 && blue > 200) return 34;
-    if (red > 200 && green < 80 && blue > 200) return 35;
-    if (red < 80 && green > 200 && blue > 200) return 36;
-    if (red > 200 && green > 200 && blue > 200) return 97;
-    if (red < 100 && green < 100 && blue < 100) return 90;
-    return 37;
+    return RGB_TO_DISCORD_ANSI.get(TextColor.nearestColorTo(ANSI_COLORS, TextColor.color(red, green, blue)).value());
+  }
+
+  private static final List<TextColor> ANSI_COLORS;
+  private static final Map<Integer, Integer> RGB_TO_DISCORD_ANSI = ImmutableMap
+      .<Integer, Integer>builder()
+      .put(0x000000, 30)
+      .put(0x800000, 31)
+      .put(0x008000, 32)
+      .put(0x808000, 33)
+      .put(0x000080, 34)
+      .put(0x800080, 35)
+      .put(0x008080, 36)
+      .put(0xC0C0C0, 37)
+      // Documented but not supported by Discord?
+//      .put(0x808080, 90)
+//      .put(0xFF0000, 91)
+//      .put(0x00FF00, 92)
+//      .put(0xFFFF00, 93)
+//      .put(0x0000FF, 94)
+//      .put(0xFF00FF, 95)
+//      .put(0x00FFFF, 96)
+//      .put(0xFFFFFF, 97)
+      .build();
+
+  static {
+    final List<TextColor> textColorList = new ArrayList<>();
+    RGB_TO_DISCORD_ANSI.forEach((rgb, ansi) -> textColorList.add(TextColor.color(rgb)));
+    ANSI_COLORS = List.copyOf(textColorList);
   }
 }
