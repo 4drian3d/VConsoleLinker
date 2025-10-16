@@ -29,7 +29,7 @@ public final class VConsoleLinker {
 	@Inject
 	private org.slf4j.Logger logger;
 	
-	@Subscribe
+	@Subscribe(priority = Short.MAX_VALUE - 1)
 	void onProxyInitialization(final ProxyInitializeEvent event) {
 		final Configuration configuration;
 		try {
