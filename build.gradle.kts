@@ -35,6 +35,8 @@ tasks {
         velocityVersion(libs.versions.velocity.get())
     }
     shadowJar {
+        archiveBaseName.set("VConsoleLinker")
+        archiveClassifier.set("")
         relocate("io.github._4drian3d.jdwebhooks", "io.github._4drian3d.vconsolelinker.libs.jdwebhooks")
     }
 }
