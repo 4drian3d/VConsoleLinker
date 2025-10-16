@@ -28,34 +28,34 @@ public final class WebHookManager {
         .setUncaughtExceptionHandler((thread, ex) -> logger.error("An error occurred", ex))
         .build());
     executor.scheduleAtFixedRate(() -> {
-      final StringBuilder builder = new StringBuilder(2000);
-      String log;
-      while ((log = logQueue.peek()) != null) {
-        // Discord character limit: 2000
-        if (builder.length() + log.length() > 2000) {
-          // Single line limit: 2000
-          if (builder.isEmpty() && log.length() > 2000) {
-            final String logQueued = logQueue.poll();
-            builder.append(logQueued, 0, Math.min(logQueued.length() - 1, 2000));
-          }
-         break;
-        }
-        builder.append('\n').append(logQueue.poll());
-      }
-      if (!builder.isEmpty()) {
-        final String webHookOutput = builder.toString();
-        client.sendWebHook(WebHook.builder().content(configuration.formatter().format(webHookOutput)).build())
-            .handle((response, e) -> {
-              if (e != null) {
-                logger.warn("An error occurred while trying to send console output to Discord Channel 1", e);
-              }
-              return null;
-            });
+      final String webHookOutput = this.populateLogMessage();
+      if (webHookOutput != null) {
+        client.sendWebHook(WebHook.builder().content(configuration.formatter().format(webHookOutput)).build());
       }
     }, 0, 500, TimeUnit.MILLISECONDS);
   }
 
   public void logMessage(String string) {
     this.logQueue.add(string);
+  }
+
+  private String populateLogMessage() {
+    String logMessage = logQueue.poll();
+    if (logMessage != null) {
+      // Single line limit: 2000
+      if (logMessage.length() > 2000) {
+        return logMessage.substring(0, 2000);
+      }
+      final StringBuilder builder = new StringBuilder(2000);
+      do {
+        // Discord character limit: 2000
+        if (builder.length() + logMessage.length() > 2000) {
+          break;
+        }
+        builder.append('\n').append(logMessage);
+      } while((logMessage = logQueue.poll()) != null);
+      return builder.toString();
+    }
+    return null;
   }
 }
