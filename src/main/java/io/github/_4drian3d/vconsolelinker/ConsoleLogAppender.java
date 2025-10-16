@@ -8,11 +8,8 @@ import org.apache.logging.log4j.core.config.Property;
 import org.apache.logging.log4j.core.config.plugins.Plugin;
 import org.apache.logging.log4j.core.layout.PatternLayout;
 
-import java.util.regex.Pattern;
-
 @Plugin(name = "VConsoleLinker", category = "Core", elementType = "appender", printObject = true)
 public final class ConsoleLogAppender extends AbstractAppender {
-    private static final Pattern LEGACY_PATTERN = Pattern.compile("§([1-9]|[abcdeflmnr])");
     private final WebHookManager webHookManager;
 
     @Inject
@@ -28,10 +25,6 @@ public final class ConsoleLogAppender extends AbstractAppender {
         if (message == null) {
             return;
         }
-        this.webHookManager.logMessage(sanitizeString(message));
-    }
-
-    private String sanitizeString(String string) {
-        return LEGACY_PATTERN.matcher(string).replaceAll("");
+        this.webHookManager.logMessage(message);
     }
 }
