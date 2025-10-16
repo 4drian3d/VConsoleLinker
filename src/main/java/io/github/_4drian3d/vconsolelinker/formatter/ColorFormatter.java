@@ -5,8 +5,8 @@ import java.util.regex.Pattern;
 
 public final class ColorFormatter implements Formatter {
 
-  private static final Pattern RGB_PATTERN = Pattern.compile("\u001B\\[38;2;(\\d+);(\\d+);(\\d+)m");
-  private static final Pattern RESET_PATTERN = Pattern.compile("\u001B\\[0m");
+  private final Pattern RGB_PATTERN = Pattern.compile("\u001B\\[38;2;(\\d+);(\\d+);(\\d+)m");
+  private final Pattern RESET_PATTERN = Pattern.compile("\u001B\\[0m");
 
   @Override
   public String format(final String message) {
@@ -27,8 +27,7 @@ public final class ColorFormatter implements Formatter {
     return """
         ```ansi
         %s
-        ```
-        """.formatted(clean);
+        ```""".formatted(clean);
   }
 
   private int approximateAnsiColor(final int red, final int green, final int blue) {

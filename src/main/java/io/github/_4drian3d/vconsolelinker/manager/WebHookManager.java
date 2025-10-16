@@ -6,6 +6,7 @@ import com.google.inject.Singleton;
 import io.github._4drian3d.jdwebhooks.WebHook;
 import io.github._4drian3d.jdwebhooks.WebHookClient;
 import io.github._4drian3d.vconsolelinker.configuration.Configuration;
+import io.github._4drian3d.vconsolelinker.formatter.Formatter;
 import org.slf4j.Logger;
 
 import java.util.Queue;
@@ -44,7 +45,7 @@ public final class WebHookManager {
     if (logMessage != null) {
       // Single line limit: 2000
       if (logMessage.length() > 2000) {
-        return logMessage.substring(0, 2000);
+        return Formatter.trimAnsi(logMessage.substring(0, 2000));
       }
       final StringBuilder builder = new StringBuilder(2000);
       do {
@@ -54,7 +55,7 @@ public final class WebHookManager {
         }
         builder.append('\n').append(logMessage);
       } while((logMessage = logQueue.poll()) != null);
-      return builder.toString();
+      return Formatter.trimAnsi(builder.toString());
     }
     return null;
   }
