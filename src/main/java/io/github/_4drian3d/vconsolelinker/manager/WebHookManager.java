@@ -3,8 +3,9 @@ package io.github._4drian3d.vconsolelinker.manager;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import io.github._4drian3d.jdwebhooks.WebHook;
-import io.github._4drian3d.jdwebhooks.WebHookClient;
+import io.github._4drian3d.jdwebhooks.component.Component;
+import io.github._4drian3d.jdwebhooks.webhook.WebHookClient;
+import io.github._4drian3d.jdwebhooks.webhook.WebHookExecution;
 import io.github._4drian3d.vconsolelinker.configuration.Configuration;
 import io.github._4drian3d.vconsolelinker.formatter.Formatter;
 import org.slf4j.Logger;
@@ -23,7 +24,10 @@ public final class WebHookManager {
 
   @Inject
   private WebHookManager(final Configuration configuration, final Logger logger) {
-    this.client = WebHookClient.from(configuration.getChannelId(), configuration.getToken());
+    this.client = WebHookClient.builder()
+        .credentials(configuration.getChannelId(), configuration.getToken())
+        .agent("VConsoleLinker | by 4drian3d")
+        .build();
     final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor(new ThreadFactoryBuilder()
         .setNameFormat("VConsoleLinker %s")
         .setUncaughtExceptionHandler((thread, ex) -> logger.error("An error occurred", ex))
@@ -31,7 +35,9 @@ public final class WebHookManager {
     executor.scheduleAtFixedRate(() -> {
       final String webHookOutput = this.populateLogMessage();
       if (webHookOutput != null) {
-        client.sendWebHook(WebHook.builder().content(configuration.formatter().format(webHookOutput)).build());
+        client.executeWebHook(WebHookExecution.builder()
+            .component(Component.textDisplay(configuration.formatter().format(webHookOutput)))
+            .build());
       }
     }, 0, 500, TimeUnit.MILLISECONDS);
   }
