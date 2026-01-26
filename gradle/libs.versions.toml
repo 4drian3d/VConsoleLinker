@@ -17,4 +17,4 @@ log4j2 = { group = "org.apache.logging.log4j", name = "log4j-core", version.ref 
 blossom = { id = "net.kyori.blossom", version.ref = "blossom" }
 shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
 runvelocity = { id = "xyz.jpenilla.run-velocity", version.ref = "runvelocity" }
-idea-ext = { id = "org.jetbrains.gradle.plugin.idea-ext", version = "1.3" }
+idea-ext = { id = "org.jetbrains.gradle.plugin.idea-ext", version = "1.4" }
